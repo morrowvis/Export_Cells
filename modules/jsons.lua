@@ -403,7 +403,7 @@ function jsons.export(regionCells, currentIndex, totalCount)
     if cell.behavesAsExterior then
         table.insert(rootLines, "    " .. jsonString("behaves_as_exterior") .. ": true,")
     end
-    if cell.isInterior then
+if cell.isInterior then
         if regionId ~= "" then
             table.insert(rootLines, "    " .. jsonString("region") .. ": " .. jsonString(regionId) .. ",")
         end
@@ -415,6 +415,14 @@ function jsons.export(regionCells, currentIndex, totalCount)
         if cell.hasWater then
             table.insert(rootLines, "    " .. jsonString("water_level") .. ": " .. jsonNumber(cell.waterLevel or 0) .. ",")
         end
+        local northAngle = 0
+        for ref in cell:iterateReferences(tes3.objectType.static) do
+            if ref.baseObject.id == "NorthMarker" then
+                northAngle = ref.orientation.z
+                break
+            end
+        end
+        table.insert(rootLines, "    " .. jsonString("north_angle") .. ": " .. jsonNumber(math.deg(northAngle)) .. ",")
     end
     -- ---- cells array: one entry per cell in the 3x3 export ----
     local cellEntries = {}
