@@ -119,7 +119,7 @@ local function writeExteriorsTxt(cell, gridType, exportMode, size)
     if gridType == "1x1" or gridType == "2x2" or gridType == "3x3" then
         local exportFolder = config.exportFolder and config.exportFolder:gsub("[\\/]$", "") or ""
         if exportFolder ~= "" then lfs.mkdir(exportFolder) end
-        local fileName = "Exteriors.txt"
+        local fileName = "exteriors.txt"
         local filePath = string.format("%s\\%s", exportFolder, fileName)
         local file = io.open(filePath, "w")
         if file then
