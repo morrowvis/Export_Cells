@@ -125,6 +125,11 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
         can_carry      = function() return canCarry and "true" or nil end,
         mesh           = function() return relMesh and jsonString(relMesh) end,
         script         = function() return obj.script and jsonString(obj.script.id or "") end,
+        destination    = function()
+            if not (ref and ref.destination) then return nil end
+            local cellId = ref.destination.cell and ref.destination.cell.id or ""
+            return jsonString(cellId)
+        end,
     }
     
     local fieldLines = {}
