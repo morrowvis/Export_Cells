@@ -36,7 +36,7 @@ end
 -- TRANSFORM HELPERS
 -- =============================================================================
 
--- Build a column-major 4x4 matrix from a Morrowind worldTransform.
+-- Build a row-major 4x4 matrix from a Morrowind worldTransform as per tes3matrix33 convention.
 local function buildMatrix4x4(transform)
     local r = transform.rotation
     local s = transform.scale or 1
