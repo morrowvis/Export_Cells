@@ -209,12 +209,25 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
                         local ok, emNode = pcall(function() return ctrl.emitter end)
                         if ok and emNode then
                             if not findEmitterEntry(emNode) then
+                                local emissive = nil
+                                pcall(function()
+                                    for _, sib in ipairs(node.children) do
+                                        if sib then
+                                            local ok2, mat = pcall(function() return sib:getProperty(0x02) end)
+                                            if ok2 and mat and mat.emissive then
+                                                emissive = mat.emissive
+                                            end
+                                        end
+                                        if emissive then break end
+                                    end
+                                end)
                                 table.insert(emitterList, {
                                     node         = emNode,
                                     particleName = node.name or "",
                                     birthRate    = ctrl.birthRate,
                                     speed        = ctrl.speed,
                                     initialSize  = ctrl.initialSize,
+                                    emissive     = emissive,
                                 })
                                 local ep = emNode
                                 while ep and tostring(ep) ~= tostring(cloned) do
@@ -301,7 +314,19 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
                                 end
                                 local okB, _ = pcall(function() return ctrl.birthRate end)
                                 if okB and not ed then
-                                    ed = { birthRate = ctrl.birthRate, speed = ctrl.speed, initialSize = ctrl.initialSize }
+                                    local emissive = nil
+                                    pcall(function()
+                                        for _, sib in ipairs(node.children) do
+                                            if sib then
+                                                local ok2, mat = pcall(function() return sib:getProperty(0x02) end)
+                                                if ok2 and mat and mat.emissive then
+                                                    emissive = mat.emissive
+                                                end
+                                            end
+                                            if emissive then break end
+                                        end
+                                    end)
+                                    ed = { birthRate = ctrl.birthRate, speed = ctrl.speed, initialSize = ctrl.initialSize, emissive = emissive }
                                 end
                                 break
                             end
@@ -318,6 +343,12 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
             end
             if ed then
                 table.insert(extraLines, "    " .. jsonString("particle_system") .. ": {")
+                if ed.emissive then
+                    table.insert(extraLines, "      " .. jsonString("emissive_color") .. ": [" ..
+                        jsonNumber(ed.emissive.r) .. ", " ..
+                        jsonNumber(ed.emissive.g) .. ", " ..
+                        jsonNumber(ed.emissive.b) .. "],")
+                end
                 table.insert(extraLines, "      " .. jsonString("birth_rate")   .. ": " .. jsonNumber(ed.birthRate)   .. ",")
                 table.insert(extraLines, "      " .. jsonString("speed")        .. ": " .. jsonNumber(ed.speed)        .. ",")
                 table.insert(extraLines, "      " .. jsonString("initial_size") .. ": " .. jsonNumber(ed.initialSize))
