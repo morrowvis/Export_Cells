@@ -45,16 +45,15 @@ local function removeExistingWearables(ref)
 end
 
 local function addWearablesToNPC(ref, searchText, removeExisting)
-    if not searchText or searchText == "" then
-        tes3.messageBox("No input provided.")
-        return
-    end
-
     if removeExisting then
         local removed = removeExistingWearables(ref)
         if removed > 0 then
             tes3.messageBox("Removed %d existing wearable item(s) from %s", removed, ref.baseObject.name)
         end
+    end
+
+    if not searchText or searchText == "" then
+        return
     end
 
     local searchTextLower = searchText:lower()
@@ -165,10 +164,16 @@ function wearables.showInputDialog()
         local searchText = input.text
         menu:destroy()
         tes3ui.leaveMenuMode()
-        
-        if searchText and searchText ~= "" then
-            addWearablesToNPC(ref, searchText, isChecked)
-        end
+        addWearablesToNPC(ref, searchText, isChecked)
+    end)
+
+    local inventoryButton = buttonBlock:createButton({ text = "Inventory" })
+    inventoryButton:register("mouseClick", function()
+        menu:destroy()
+        tes3ui.leaveMenuMode()
+        timer.delayOneFrame(function()
+            tes3.showContentsMenu({ reference = ref })
+        end)
     end)
 
     local cancelButton = buttonBlock:createButton({ text = "Cancel" })
