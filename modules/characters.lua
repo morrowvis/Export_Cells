@@ -30,7 +30,7 @@ function characters.export(ref)
     fullPath = fullPath:gsub("[\\/]+", "\\")
 
     bakedNode:saveBinary(fullPath)
-    tes3.messageBox("Character exported to %s", fullPath)
+    tes3.messageBox("Character exported to %s", fileName)
 end
 
 return characters

@@ -65,7 +65,7 @@ local function doExport(modFilter, startChunk)
         for i = startIdx, endIdx do table.insert(chunkObjects, results[i]) end
         
         lfs.mkdir(config.exportFolder)
-        local exportName = modFilter and (modFilter:gsub("%.es.$", ""):gsub("[^%w]", "_") .. " records") or "master records"
+        local exportName = modFilter and (modFilter:gsub("%.es[mp]$", "") .. " records") or "master records"
         local fileName = totalChunks == 1 and string.format("%s.json", exportName) or string.format("%s part %d.json", exportName, chunkIndex)
         local path = config.exportFolder .. "\\" .. fileName
         

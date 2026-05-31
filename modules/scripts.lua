@@ -100,7 +100,7 @@ local function doExport(modFilter)
     local function processBatch()
         if exportCancelRequestedRef[1] then
             exportInProgress = false
-            tes3.messageBox("Scripts/Globals export cancelled.")
+            tes3.messageBox("Scripts export cancelled.")
             return
         end
 
