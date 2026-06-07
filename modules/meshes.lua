@@ -373,7 +373,7 @@ function meshes.exportObjectsByMeshFolder(targetFolder, folderDataMap, resumeFol
                         fileName = string.format("%s meshes.nif", baseName)
                     end
                 else
-                    local safeName = folderName:gsub("%.es.$", ""):gsub("[^%w]", "_")
+                    local safeName = folderName:gsub("%.es[mp]$", ""):gsub("[\\/:*?\"<>|]", "_")
                     if totalChunks > 1 then
                         fileName = string.format("%s meshes part %d.nif", safeName, chunkIndex)
                     else
