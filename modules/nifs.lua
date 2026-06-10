@@ -150,7 +150,7 @@ function nifs.export(regionCells, exportMode, currentIndex, totalCount)
         modeSuffix = " landscape"
     elseif exportMode == constants.EXPORT_MODE.LAYER then
         local typeName = constants.objectTypeNames[config.exportLayerType] or "Layer"
-        modeSuffix = " " .. typeName
+        modeSuffix = " " .. typeName .. " layer"
     end
 
     lfs.mkdir(config.exportFolder)
