@@ -26,7 +26,7 @@ local config = {
         ["active"] = "json",
         ["1x1"] = "disabled",
         ["2x2"] = "landscape_only",
-        ["3x3"] = "json"
+        ["3x3"] = "json",
     },
 
     exportLayerType = tes3.objectType.npc,
