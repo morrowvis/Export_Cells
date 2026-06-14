@@ -1,6 +1,5 @@
 local wearables = {}
-local GUI_ID_InputDialog = tes3ui.registerID("Wearables:InputDialog")
-local GUI_ID_InputField = tes3ui.registerID("Wearables:InputField")
+local ui = require("ExportCells.ui")
 
 local config = nil
 
@@ -106,85 +105,16 @@ function wearables.showInputDialog()
         return
     end
 
-    local menu = tes3ui.createMenu({ id = GUI_ID_InputDialog, fixedFrame = true })
-    menu.minWidth = 350
-    menu.minHeight = 150
-    menu.autoHeight = true
-    menu.autoWidth = true
-
-    local title = menu:createLabel({ text = "Mod name (.esp) or search string:" })
-    title.borderBottom = 10
-
-    local inputBlock = menu:createBlock()
-    inputBlock.autoHeight = true
-    inputBlock.widthProportional = 1.0
-
-    local input = inputBlock:createTextInput({ id = GUI_ID_InputField })
-    input.widthProportional = 1.0
-    input.height = 30
-    input.borderAllSides = 5
-
-    local checkboxBlock = menu:createBlock()
-    checkboxBlock.autoHeight = true
-    checkboxBlock.widthProportional = 1.0
-    checkboxBlock.borderTop = 10
-    checkboxBlock.flowDirection = "left_to_right"
-
-    local isChecked = true
-    
-    local checkbox = checkboxBlock:createButton({ text = "[X]" })
-    checkbox.paddingAllSides = 4
-    
-    local function updateCheckbox()
-        if isChecked then
-            checkbox.text = "[X]"
-        else
-            checkbox.text = "[ ]"
+    ui.createWearablesInputDialog({
+        onConfirm = function(searchText, removeExisting)
+            addWearablesToNPC(ref, searchText, removeExisting)
+        end,
+        onInventory = function()
+            timer.delayOneFrame(function()
+                tes3.showContentsMenu({ reference = ref })
+            end)
         end
-        checkbox:updateLayout()
-    end
-    
-    checkbox:register("mouseClick", function()
-        isChecked = not isChecked
-        updateCheckbox()
-    end)
-
-    local checkboxLabel = checkboxBlock:createLabel({ text = " Remove existing wearables" })
-    checkboxLabel.borderLeft = 8
-    checkboxLabel.borderTop = 4
-
-    local buttonBlock = menu:createBlock()
-    buttonBlock.widthProportional = 1.0
-    buttonBlock.autoHeight = true
-    buttonBlock.childAlignX = 1.0
-    buttonBlock.borderTop = 15
-
-    local okButton = buttonBlock:createButton({ text = "OK" })
-    okButton:register("mouseClick", function()
-        local searchText = input.text
-        menu:destroy()
-        tes3ui.leaveMenuMode()
-        addWearablesToNPC(ref, searchText, isChecked)
-    end)
-
-    local inventoryButton = buttonBlock:createButton({ text = "Inventory" })
-    inventoryButton:register("mouseClick", function()
-        menu:destroy()
-        tes3ui.leaveMenuMode()
-        timer.delayOneFrame(function()
-            tes3.showContentsMenu({ reference = ref })
-        end)
-    end)
-
-    local cancelButton = buttonBlock:createButton({ text = "Cancel" })
-    cancelButton:register("mouseClick", function()
-        menu:destroy()
-        tes3ui.leaveMenuMode()
-    end)
-
-    menu:updateLayout()
-    tes3ui.enterMenuMode(GUI_ID_InputDialog)
-    tes3ui.acquireTextInput(input)
+    })
 end
 
 return wearables
