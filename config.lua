@@ -29,8 +29,6 @@ local config = {
         ["3x3"] = "json",
     },
 
-    exportLayerType = tes3.objectType.npc,
-
     exportTypes = {
         tes3.objectType.activator,
         tes3.objectType.alchemy,
@@ -51,12 +49,16 @@ local config = {
         tes3.objectType.weapon,
     },
 
+    exportLayerType = tes3.objectType.npc,
+    actorExportMode = "target",
+
     cleanExports = false,
     exportHidden = false,
     exportReports = true,
     exportEmptyLandmassCells = true,
     interiorGarbageCollection = true,
     nifRenameMeshChildNodes = true,
+    nifNodeNameStrategy = "mesh",
     resetAnimation = true,
     
     flaggedMeshesFile = "Flagged meshes.txt",

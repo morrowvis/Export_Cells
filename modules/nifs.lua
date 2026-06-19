@@ -47,15 +47,15 @@ function nifs.export(regionCells, exportMode, currentIndex, totalCount)
 
                     if node then
                         local obj = ref.object
-                        local isCharacter = (obj.objectType == tes3.objectType.npc or obj.objectType == tes3.objectType.creature)
+                        local isActor = (obj.objectType == tes3.objectType.npc or obj.objectType == tes3.objectType.creature)
                         local isLight = (obj.objectType == tes3.objectType.light)
                         local objId = obj.id
 
-                        if exportMode == constants.EXPORT_MODE.LAYER and config.resetAnimation and isCharacter then
+                        if exportMode == constants.EXPORT_MODE.LAYER and config.resetAnimation and isActor then
                             utils.resetAnimation(ref)
                         end
-                        if isCharacter then
-                            local bakedNode = utils.bakeCharacter(ref, true)
+                        if isActor then
+                            local bakedNode = utils.bakeActor(ref, true)
                             if bakedNode then
                                 node = bakedNode
                             end
@@ -64,7 +64,7 @@ function nifs.export(regionCells, exportMode, currentIndex, totalCount)
                         local nodeName, baseNameForRenaming
                         local relativePath = (obj.mesh and obj.mesh ~= "") and utils.getRelativeMeshPath(obj.mesh) or nil
 
-                        if isCharacter then
+                        if isActor then
                             nodeName = objId
                             baseNameForRenaming = objId
                         elseif isLight then
@@ -72,6 +72,9 @@ function nifs.export(regionCells, exportMode, currentIndex, totalCount)
                             local count = idCounters[objId]
                             nodeName = (count == 1) and objId or string.format("%s.%03d", objId, count - 1)
                             baseNameForRenaming = relativePath or objId
+                        elseif config.nifNodeNameStrategy == "id" then
+                            nodeName = objId
+                            baseNameForRenaming = objId
                         elseif relativePath then
                             nodeName = relativePath
                             baseNameForRenaming = relativePath

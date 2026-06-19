@@ -175,11 +175,11 @@ local function onKeyDownN(e)
     end
 end
 
--- Shift+C: Export Character Call
+-- Shift+C: Export Actor Call
 local function onKeyDownC(e)
     if tes3ui.menuMode() then return end
     if e.isShiftDown then
-        export.exportCharacter()
+        export.exportActor()
     end
 end
 
@@ -192,6 +192,6 @@ event.register("keyDown", onKeyDown8, { filter = tes3.scanCode["8"] })
 event.register("keyDown", onKeyDown9, { filter = tes3.scanCode["9"] })
 event.register("keyDown", onKeyDown0, { filter = tes3.scanCode["0"] })
 event.register("keyDown", onKeyDownR, { filter = tes3.scanCode.r })
-event.register("keyDown", onKeyDownN, { filter = tes3.scanCode.n })
 event.register("keyDown", onKeyDownC, { filter = tes3.scanCode.c })
+event.register("keyDown", onKeyDownN, { filter = tes3.scanCode.n })
 event.register("keyDown", onKeyDownSpace)

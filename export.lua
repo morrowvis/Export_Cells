@@ -420,7 +420,12 @@ export.export2x2 = export2x2
 export.export3x3 = export3x3
 export.exportActiveCells = exportActiveCells
 
-function export.exportCharacter()
+function export.exportActor()
+    if config and config.actorExportMode == constants.ACTOR_EXPORT_MODE.ACTIVE_CELLS then
+        actorsModule.exportActiveCells()
+        return
+    end
+
     local ref = tes3.getPlayerTarget()
     actorsModule.export(ref)
 end

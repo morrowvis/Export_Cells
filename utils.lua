@@ -27,7 +27,7 @@ function utils.resetAnimation(ref)
     resetAnimation(ref)
 end
 
-function utils.bakeCharacter(ref)
+function utils.bakeActor(ref)
     if not ref or not ref.sceneNode then return nil end
 
     local invTransform = ref.sceneNode.worldTransform:invert()

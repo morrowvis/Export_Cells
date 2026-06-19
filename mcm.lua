@@ -122,6 +122,18 @@ function mcm.registerModConfig()
         variable = mwse.mcm.createTableVariable({ id = "exportLayerType", table = config })
     })
 
+    local actorExportModeOptions = {
+        { label = "Target", value = constants.ACTOR_EXPORT_MODE.TARGET },
+        { label = "Active Cells", value = constants.ACTOR_EXPORT_MODE.ACTIVE_CELLS },
+    }
+
+    exportModeGroup:createDropdown({
+        label = "Actor Export Mode",
+        description = "Select the actor export mode for Shift+C: Target exports the targeted NPC/creature; Active Cells exports unique actors from currently active cells.",
+        options = actorExportModeOptions,
+        variable = mwse.mcm.createTableVariable({ id = "actorExportMode", table = config })
+    })
+
     local toggleGroup = exportPage:createCategory("Export Toggles")
 
     toggleGroup:createYesNoButton({
@@ -154,38 +166,58 @@ function mcm.registerModConfig()
         variable = mwse.mcm.createTableVariable({ id = "resetAnimation", table = config })
     })
 
+    local nifNameOptions = {
+        { label = "Mesh Path", value = "mesh" },
+        { label = "Object ID", value = "id" },
+    }
+
+    local toggleGroup = exportPage:createCategory("NIFs")
+
+    toggleGroup:createDropdown({
+        label = "Node Name Strategy",
+        description = "Choose whether exported NIF node names use the mesh path or the object ID. Light top-level nodes still use object ID.",
+        options = nifNameOptions,
+        variable = mwse.mcm.createTableVariable({ id = "nifNodeNameStrategy", table = config })
+    })
+
     toggleGroup:createYesNoButton({
-        label = "NIF: Rename Mesh Child Nodes",
+        label = "Rename Mesh Child Nodes",
         description = "Sequentially renames mesh nodes (NiTriShape/NiTriStrips) using the object's relative mesh path.",
         variable = mwse.mcm.createTableVariable({ id = "nifRenameMeshChildNodes", table = config })
     })
 
+    local toggleGroup = exportPage:createCategory("JSONs")
+
     toggleGroup:createYesNoButton({
-        label = "JSON: Selective Child Nodes Only",
+        label = "Selective Child Nodes Only",
         description = "JSON exports only exports selective child nodes (Lights, Particles) rather than the whole hierarchy.",
         variable = mwse.mcm.createTableVariable({ id = "jsonSelectiveChildNodesOnly", table = config })
     })
 
     toggleGroup:createYesNoButton({
-        label = "JSON: Sequential Naming",
+        label = "Sequential Naming",
         description = "Sequentially renames all exported JSON elements (Instances, Lights, Empties) to ensure uniqueness.",
         variable = mwse.mcm.createTableVariable({ id = "jsonSequentialNaming", table = config })
     })
 
+    local toggleGroup = exportPage:createCategory("Meshes")
+
     toggleGroup:createYesNoButton({
-        label = "Meshes: Export JSONs With NIFs",
+        label = "Export JSONs With NIFs",
         description = "When exporting meshes, also generate a JSON file.",
         variable = mwse.mcm.createTableVariable({ id = "exportMeshesWithJson", table = config })
     })
 
     toggleGroup:createYesNoButton({
-        label = "Meshes: Spaced Out In Grid",
+        label = "Spaced Out In Grid",
         description = "When exporting meshes, arrange them in a grid. If disabled, all objects will be placed at the origin (0,0,0).",
         variable = mwse.mcm.createTableVariable({ id = "exportMeshesSpacedOut", table = config })
     })
 
+    local toggleGroup = exportPage:createCategory("Records")
+
     toggleGroup:createYesNoButton({
-        label = "Records: Require Mesh",
+        label = "Require Mesh",
         description = "Only export records that have a mesh path.",
         variable = mwse.mcm.createTableVariable({ id = "recordsRequireMesh", table = config })
     })
