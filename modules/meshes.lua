@@ -126,7 +126,7 @@ local function discoverAllUsedFolders(query)
 end
 
 local function collectFlaggedMeshes(modFilter)
-    local fileName = config.flaggedMeshesFile or "Flagged meshes.txt"
+    local fileName = config.flaggedMeshesFile or "flagged meshes.txt"
     lfs.mkdir(config.exportFolder)
     local path = config.exportFolder .. "\\" .. fileName
     
@@ -359,11 +359,11 @@ function meshes.exportObjectsByMeshFolder(targetFolder, folderDataMap, resumeFol
 
                 lfs.mkdir(config.exportFolder)
                 local fileName
-                if folderName == "Flagged_meshes" or folderName == "Flagged" then
+                if folderName == "flagged meshes" or folderName == "flagged" then
                     if totalChunks > 1 then
-                        fileName = string.format("Flagged meshes part%d.nif", chunkIndex)
+                        fileName = string.format("flagged meshes part%d.nif", chunkIndex)
                     else
-                        fileName = "Flagged meshes.nif"
+                        fileName = "flagged meshes.nif"
                     end
                 elseif folderName:find("_plugin$") then
                     local baseName = folderName:gsub("_plugin$", "")

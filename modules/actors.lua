@@ -24,7 +24,12 @@ function actors.export(ref)
     end
 
     local exportDir = config and config.exportFolder or "Data Files/Export Cells/"
-    local rawName = ref.baseObject.name or ref.baseObject.id
+    local rawName
+    if config and config.actorFilename == "id" then
+        rawName = ref.baseObject.id
+    else
+        rawName = ref.baseObject.name or ref.baseObject.id
+    end
     local safeName = rawName:gsub('[^%w %._-]', '_')
     local fileName = ("%s.nif"):format(safeName)
     local fullPath = exportDir .. "\\" .. fileName
@@ -67,7 +72,12 @@ function actors.exportActiveCells()
                 bakedNode.translation = tes3vector3.new(0, 0, 0)
                 bakedNode.rotation = tes3matrix33.new(1, 0, 0, 0, 1, 0, 0, 0, 1)
 
-                local rawName = ref.baseObject.name or ref.baseObject.id
+                local rawName
+                if config and config.actorFilename == "id" then
+                    rawName = ref.baseObject.id
+                else
+                    rawName = ref.baseObject.name or ref.baseObject.id
+                end
                 local safeName = rawName:gsub('[^%w %._-]', '_')
                 local fileName = ("%s.nif"):format(safeName)
                 local fullPath = exportDir .. "\\" .. fileName

@@ -335,8 +335,8 @@ function export.exportObjectsByMeshFolder(folder)
             onFlagged = function(modFilter)
                 local objs = meshesModule.collectFlagged(modFilter)
                 if objs and #objs > 0 then
-                    local map = { ["Flagged_meshes"] = objs }
-                    meshesModule.exportObjectsByMeshFolder({"Flagged_meshes"}, map)
+                    local map = { ["flagged meshes"] = objs }
+                    meshesModule.exportObjectsByMeshFolder({"flagged meshes"}, map)
                 else
                     if modFilter and modFilter ~= "" then
                         tes3.messageBox("No matching objects found in flagged file for mod: %s", modFilter)

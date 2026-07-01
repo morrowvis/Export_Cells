@@ -22,12 +22,16 @@ function mcm.registerModConfig()
         description = "Configure export behavior."
     })
 
-    exportPage:createTextField({
-        label = "Export Folder Path",
-        description = "Directory where exported files will be written.",
+    local group = exportPage:createCategory("Export Folder")
+
+    group:createTextField({
+        label = "Folder Path",
+        description = "Directory where files will be exported.",
         buttonText = "Apply",
         variable = mwse.mcm.createTableVariable({ id = "exportFolder", table = config })
     })
+
+    local group = exportPage:createCategory("Export Modes")
 
     local exportModes = {
         { label = "Standard", value = constants.EXPORT_MODE.STANDARD },
@@ -38,30 +42,28 @@ function mcm.registerModConfig()
         { label = "Disabled", value = constants.EXPORT_MODE.DISABLED },
     }
 
-    local exportModeGroup = exportPage:createCategory("Export Modes")
-
-    exportModeGroup:createDropdown({
+    group:createDropdown({
         label = "Active Cells",
         description = "Export mode used when exporting the currently active cells.",
         options = exportModes,
         variable = mwse.mcm.createTableVariable({ id = "active", table = config.defaultExportModes })
     })
 
-    exportModeGroup:createDropdown({
+    group:createDropdown({
         label = "1x1",
         description = "Export mode used for 1x1s.",
         options = exportModes,
         variable = mwse.mcm.createTableVariable({ id = "1x1", table = config.defaultExportModes })
     })
 
-    exportModeGroup:createDropdown({
+    group:createDropdown({
         label = "2x2",
         description = "Export mode used for 2x2s.",
         options = exportModes,
         variable = mwse.mcm.createTableVariable({ id = "2x2", table = config.defaultExportModes })
     })
 
-    exportModeGroup:createDropdown({
+    group:createDropdown({
         label = "3x3",
         description = "Export mode used for 3x3s.",
         options = exportModes,
@@ -78,9 +80,9 @@ function mcm.registerModConfig()
         table.insert(layerOptions, { label = item.name, value = item.id })
     end
 
-    local customGridGroup = exportPage:createCategory("Custom Grid Sizes")
+    local group = exportPage:createCategory("Custom Grid Sizes")
 
-    customGridGroup:createTextField({
+    group:createTextField({
         label = "Custom Grid Size (1x1)",
         description = "Additional grid size option for 1x1 exports.",
         buttonText = "Apply",
@@ -88,7 +90,7 @@ function mcm.registerModConfig()
         numbersOnly = true
     })
 
-    customGridGroup:createTextField({
+    group:createTextField({
         label = "Custom Grid Size (2x2)",
         description = "Additional grid size option for 2x2 exports.",
         buttonText = "Apply",
@@ -96,7 +98,7 @@ function mcm.registerModConfig()
         numbersOnly = true
     })
 
-    customGridGroup:createTextField({
+    group:createTextField({
         label = "Custom Grid Size (3x3)",
         description = "Additional grid size option for 3x3 exports.",
         buttonText = "Apply",
@@ -104,7 +106,14 @@ function mcm.registerModConfig()
         numbersOnly = true
     })
 
-    exportModeGroup:createSlider({
+    group:createDropdown({
+        label = "Layer Object Type",
+        description = "Select the object type to export when using Layer mode.",
+        options = layerOptions,
+        variable = mwse.mcm.createTableVariable({ id = "exportLayerType", table = config })
+    })
+
+    group:createSlider({
         label = "Teleport Delay (seconds)",
         description = "Delay between teleports.",
         min = 0,
@@ -115,108 +124,115 @@ function mcm.registerModConfig()
         variable = mwse.mcm.createTableVariable({ id = "teleportDelaySeconds", table = config })
     })
 
-    exportModeGroup:createDropdown({
-        label = "Layer Object Type",
-        description = "Select the object type to export when using Layer mode.",
-        options = layerOptions,
-        variable = mwse.mcm.createTableVariable({ id = "exportLayerType", table = config })
+    local group = exportPage:createCategory("Export Toggles")
+
+    group:createYesNoButton({
+        label = "Export Hidden Objects",
+        description = "Export objects that are hidden in the game world, such as collisions.",
+        variable = mwse.mcm.createTableVariable({ id = "exportHidden", table = config })
     })
+
+    group:createYesNoButton({
+        label = "Clean Exports",
+        description = "Removes extra data and dynamic effects.",
+        variable = mwse.mcm.createTableVariable({ id = "cleanExports", table = config })
+    })
+
+    group:createYesNoButton({
+        label = "Export Reports",
+        description = "Saves text for reports and exports.",
+        variable = mwse.mcm.createTableVariable({ id = "exportReports", table = config })
+    })
+
+    group:createYesNoButton({
+        label = "Export Empty Landmass Cells",
+        description = "Include empty cells when using landmass export.",
+        variable = mwse.mcm.createTableVariable({ id = "exportEmptyLandmassCells", table = config })
+    })
+
+    group:createYesNoButton({
+        label = "Reset Animation Before Export",
+        description = "Resets NPC and creature animations to their idle start pose before exporting. Helps avoid exporting actors mid-animation.",
+        variable = mwse.mcm.createTableVariable({ id = "resetAnimation", table = config })
+    })
+
+    local group = exportPage:createCategory("JSONs")
+
+    group:createYesNoButton({
+        label = "Selective Child Nodes Only",
+        description = "JSON exports only exports selective child nodes (Lights, Particles) rather than the whole hierarchy.",
+        variable = mwse.mcm.createTableVariable({ id = "jsonSelectiveChildNodesOnly", table = config })
+    })
+
+    group:createYesNoButton({
+        label = "Sequential Naming",
+        description = "Sequentially renames all exported JSON elements (Instances, Lights, Empties) to ensure uniqueness.",
+        variable = mwse.mcm.createTableVariable({ id = "jsonSequentialNaming", table = config })
+    })
+
+    local group = exportPage:createCategory("NIFs")
+
+    local nifNameOptions = {
+        { label = "Object ID", value = "id" },
+        { label = "Mesh Path", value = "mesh" },
+    }
+
+    group:createDropdown({
+        label = "Node Name Strategy",
+        description = "Choose whether exported NIF node names use the object ID or mesh path. Mesh path is recommended. Light top-level nodes still use object ID.",
+        options = nifNameOptions,
+        variable = mwse.mcm.createTableVariable({ id = "nifNodeNameStrategy", table = config })
+    })
+
+    group:createYesNoButton({
+        label = "Rename Mesh Child Nodes",
+        description = "Sequentially renames mesh nodes (NiTriShape/NiTriStrips) using the object's relative mesh path.",
+        variable = mwse.mcm.createTableVariable({ id = "nifRenameMeshChildNodes", table = config })
+    })
+
+    local group = exportPage:createCategory("Actors")
 
     local actorExportModeOptions = {
         { label = "Target", value = constants.ACTOR_EXPORT_MODE.TARGET },
         { label = "Active Cells", value = constants.ACTOR_EXPORT_MODE.ACTIVE_CELLS },
     }
 
-    exportModeGroup:createDropdown({
+    group:createDropdown({
         label = "Actor Export Mode",
         description = "Select the actor export mode for Shift+C: Target exports the targeted NPC/creature; Active Cells exports unique actors from currently active cells.",
         options = actorExportModeOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorExportMode", table = config })
     })
 
-    local toggleGroup = exportPage:createCategory("Export Toggles")
-
-    toggleGroup:createYesNoButton({
-        label = "Export Hidden Objects",
-        description = "Export objects that are hidden in the game world, such as collisions.",
-        variable = mwse.mcm.createTableVariable({ id = "exportHidden", table = config })
-    })
-
-    toggleGroup:createYesNoButton({
-        label = "Clean Exports",
-        description = "Removes extra data and dynamic effects.",
-        variable = mwse.mcm.createTableVariable({ id = "cleanExports", table = config })
-    })
-
-    toggleGroup:createYesNoButton({
-        label = "Export Reports",
-        description = "Saves text for reports and exports.",
-        variable = mwse.mcm.createTableVariable({ id = "exportReports", table = config })
-    })
-
-    toggleGroup:createYesNoButton({
-        label = "Export Empty Landmass Cells",
-        description = "Include empty cells when using landmass export.",
-        variable = mwse.mcm.createTableVariable({ id = "exportEmptyLandmassCells", table = config })
-    })
-
-    toggleGroup:createYesNoButton({
-        label = "Reset Animation Before Export",
-        description = "Resets NPC and creature animations to their idle start pose before exporting. Helps avoid exporting actors mid-animation.",
-        variable = mwse.mcm.createTableVariable({ id = "resetAnimation", table = config })
-    })
-
-    local nifNameOptions = {
-        { label = "Mesh Path", value = "mesh" },
+    local actorFilenameOptions = {
         { label = "Object ID", value = "id" },
+        { label = "Object Name", value = "name" },
     }
 
-    local toggleGroup = exportPage:createCategory("NIFs")
-
-    toggleGroup:createDropdown({
-        label = "Node Name Strategy",
-        description = "Choose whether exported NIF node names use the mesh path or the object ID. Light top-level nodes still use object ID.",
-        options = nifNameOptions,
-        variable = mwse.mcm.createTableVariable({ id = "nifNodeNameStrategy", table = config })
+    group:createDropdown({
+        label = "Actor Filename",
+        description = "Choose whether exported NIF files use the object ID or name. Object IDs are for uniqueness, whereas names are for readability.",
+        options = actorFilenameOptions,
+        variable = mwse.mcm.createTableVariable({ id = "actorFilename", table = config })
     })
 
-    toggleGroup:createYesNoButton({
-        label = "Rename Mesh Child Nodes",
-        description = "Sequentially renames mesh nodes (NiTriShape/NiTriStrips) using the object's relative mesh path.",
-        variable = mwse.mcm.createTableVariable({ id = "nifRenameMeshChildNodes", table = config })
-    })
+    local group = exportPage:createCategory("Meshes")
 
-    local toggleGroup = exportPage:createCategory("JSONs")
-
-    toggleGroup:createYesNoButton({
-        label = "Selective Child Nodes Only",
-        description = "JSON exports only exports selective child nodes (Lights, Particles) rather than the whole hierarchy.",
-        variable = mwse.mcm.createTableVariable({ id = "jsonSelectiveChildNodesOnly", table = config })
-    })
-
-    toggleGroup:createYesNoButton({
-        label = "Sequential Naming",
-        description = "Sequentially renames all exported JSON elements (Instances, Lights, Empties) to ensure uniqueness.",
-        variable = mwse.mcm.createTableVariable({ id = "jsonSequentialNaming", table = config })
-    })
-
-    local toggleGroup = exportPage:createCategory("Meshes")
-
-    toggleGroup:createYesNoButton({
+    group:createYesNoButton({
         label = "Export JSONs With NIFs",
         description = "When exporting meshes, also generate a JSON file.",
         variable = mwse.mcm.createTableVariable({ id = "exportMeshesWithJson", table = config })
     })
 
-    toggleGroup:createYesNoButton({
+    group:createYesNoButton({
         label = "Spaced Out In Grid",
         description = "When exporting meshes, arrange them in a grid. If disabled, all objects will be placed at the origin (0,0,0).",
         variable = mwse.mcm.createTableVariable({ id = "exportMeshesSpacedOut", table = config })
     })
 
-    local toggleGroup = exportPage:createCategory("Records")
+    local group = exportPage:createCategory("Records")
 
-    toggleGroup:createYesNoButton({
+    group:createYesNoButton({
         label = "Require Mesh",
         description = "Only export records that have a mesh path.",
         variable = mwse.mcm.createTableVariable({ id = "recordsRequireMesh", table = config })
@@ -225,36 +241,36 @@ function mcm.registerModConfig()
     -- =============================================================================
     -- CONSOLE COMMANDS PAGE
     -- =============================================================================
-    local consolePage = template:createSideBarPage({
+    local group = template:createSideBarPage({
         label = "Console Commands",
         description = "Configure which console commands are applied during export."
     })
 
-    consolePage:createYesNoButton({
+    group:createYesNoButton({
         label = "Auto-Manage God Mode (tgm)",
         description = "Automatically manages God Mode while exporting or traversing.",
         variable = mwse.mcm.createTableVariable({ id = "tgm", table = config.consoleToggles })
     })
 
-    consolePage:createYesNoButton({
+    group:createYesNoButton({
         label = "Auto-Manage AI (tai)",
         description = "Automatically manages NPC AI while exporting or traversing.",
         variable = mwse.mcm.createTableVariable({ id = "tai", table = config.consoleToggles })
     })
 
-    consolePage:createYesNoButton({
+    group:createYesNoButton({
         label = "Auto-Manage Collision (tcl)",
         description = "Automatically manages collision while exporting or traversing.",
         variable = mwse.mcm.createTableVariable({ id = "tcl", table = config.consoleToggles })
     })
 
-    consolePage:createYesNoButton({
+    group:createYesNoButton({
         label = "Disable Vanity Mode",
         description = "Automatically manages vanity camera while exporting or traversing.",
         variable = mwse.mcm.createTableVariable({ id = "disablevanitymode", table = config.consoleToggles })
     })
 
-    consolePage:createYesNoButton({
+    group:createYesNoButton({
         label = "Console Custom Commands",
         description = "Executes the lines in console.lua when teleporting to landmass center.",
         variable = mwse.mcm.createTableVariable({ id = "runConsoleCustomCommands", table = config })

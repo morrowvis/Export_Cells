@@ -51,6 +51,7 @@ local config = {
 
     exportLayerType = tes3.objectType.npc,
     actorExportMode = "target",
+    actorFilename = "name",
 
     cleanExports = false,
     exportHidden = false,
@@ -66,7 +67,8 @@ local config = {
     exportMeshesSpacedOut = true,
     recordsRequireMesh = false,
     recordsExcludeTypes = {
-        --tes3.objectType.creature,
+        tes3.objectType.creature,
+        tes3.objectType.bodyPart,
     },
 
     -- =============================================================================
