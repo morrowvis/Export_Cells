@@ -2,4 +2,5 @@
 -- CONSOLE CUSTOM COMMANDS
 -- =============================================================================
 
---tes3.setGlobal("ColonyState", 100)
+tes3.setGlobal("ColonyState", 100)
+tes3.setGlobal("kjs_g_beacon", 1)
