@@ -126,7 +126,7 @@ local function discoverAllUsedFolders(query)
 end
 
 local function collectFlaggedMeshes(modFilter)
-    local fileName = config.flaggedMeshesFile or "flagged meshes.txt"
+    local fileName = config.flaggedMeshesFile or "flagged_meshes.txt"
     lfs.mkdir(config.exportFolder)
     local path = config.exportFolder .. "\\" .. fileName
     

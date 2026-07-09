@@ -62,7 +62,7 @@ local config = {
     nifNodeNameStrategy = "mesh",
     resetAnimation = true,
     
-    flaggedMeshesFile = "flagged meshes.txt",
+    flaggedMeshesFile = "flagged_meshes.txt",
     exportMeshesWithJson = false,
     exportMeshesSpacedOut = true,
     recordsRequireMesh = false,
