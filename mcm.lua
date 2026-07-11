@@ -62,6 +62,23 @@ function mcm.registerModConfig()
         options = exportModes,
         variable = mwse.mcm.createTableVariable({ id = "3x3", table = config.defaultExportModes })
     })
+    
+    local layerOptions = {}
+    local sortedTypes = {}
+    for k, v in pairs(constants.objectTypeNames) do
+        table.insert(sortedTypes, { id = k, name = v })
+    end
+    table.sort(sortedTypes, function(a, b) return a.name < b.name end)
+    for _, item in ipairs(sortedTypes) do
+        table.insert(layerOptions, { label = item.name, value = item.id })
+    end
+
+    group:createDropdown({
+        label = "Layer Object Type",
+        description = "Select the object type to export when using Layer mode.",
+        options = layerOptions,
+        variable = mwse.mcm.createTableVariable({ id = "exportLayerType", table = config })
+    })
 
     local actorExportModeOptions = {
         { label = "Target", value = constants.ACTOR_EXPORT_MODE.TARGET },
@@ -75,15 +92,16 @@ function mcm.registerModConfig()
         variable = mwse.mcm.createTableVariable({ id = "actorExportMode", table = config })
     })
 
-    local layerOptions = {}
-    local sortedTypes = {}
-    for k, v in pairs(constants.objectTypeNames) do
-        table.insert(sortedTypes, { id = k, name = v })
-    end
-    table.sort(sortedTypes, function(a, b) return a.name < b.name end)
-    for _, item in ipairs(sortedTypes) do
-        table.insert(layerOptions, { label = item.name, value = item.id })
-    end
+    group:createSlider({
+        label = "Teleport Delay (seconds)",
+        description = "Delay between teleports.",
+        min = 0,
+        max = 2,
+        step = 0.01,
+        jump = 0.1,
+        decimalPlaces = 2,
+        variable = mwse.mcm.createTableVariable({ id = "teleportDelaySeconds", table = config })
+    })
 
     local group = modesPage:createCategory("Custom Grid Sizes")
 
@@ -109,24 +127,6 @@ function mcm.registerModConfig()
         buttonText = "Apply",
         variable = mwse.mcm.createTableVariable({ id = "customGridSize3x3", table = config }),
         numbersOnly = true
-    })
-
-    group:createDropdown({
-        label = "Layer Object Type",
-        description = "Select the object type to export when using Layer mode.",
-        options = layerOptions,
-        variable = mwse.mcm.createTableVariable({ id = "exportLayerType", table = config })
-    })
-
-    group:createSlider({
-        label = "Teleport Delay (seconds)",
-        description = "Delay between teleports.",
-        min = 0,
-        max = 2,
-        step = 0.01,
-        jump = 0.1,
-        decimalPlaces = 2,
-        variable = mwse.mcm.createTableVariable({ id = "teleportDelaySeconds", table = config })
     })
 
     -- =============================================================================
@@ -219,6 +219,25 @@ function mcm.registerModConfig()
         description = "Choose whether exported NIF files use the object ID or name. Object IDs are for uniqueness, whereas names are for readability.",
         options = actorFilenameOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorFilename", table = config })
+    })
+
+    local actorBakeModeOptions = {
+        { label = "Standard", value = "standard" },
+        { label = "Skin Deform", value = "deform" },
+    }
+
+    group:createDropdown({
+        label = "Actor Bake Mode",
+        description = "Bake mode for regular actor exports (Shift+C targeted export and Active Cells bulk export). Standard preserves the full skeleton and skinning data so the file stays riggable. Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data.",
+        options = actorBakeModeOptions,
+        variable = mwse.mcm.createTableVariable({ id = "actorBakeMode", table = config })
+    })
+
+    group:createDropdown({
+        label = "Actor Layer Bake Mode",
+        description = "Bake mode for actor exports in Layer mode (NIF exports). Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data. Standard preserves the full skeleton and skinning data so the file stays riggable.",
+        options = actorBakeModeOptions,
+        variable = mwse.mcm.createTableVariable({ id = "actorLayerBakeMode", table = config })
     })
 
     group:createYesNoButton({

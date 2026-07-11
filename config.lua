@@ -52,6 +52,8 @@ local config = {
     exportLayerType = tes3.objectType.npc,
     actorExportMode = "target",
     actorFilename = "name",
+    actorBakeMode = "standard",
+    actorLayerBakeMode = "deform",
 
     cleanExports = false,
     exportHidden = false,

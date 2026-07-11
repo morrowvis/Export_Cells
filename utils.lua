@@ -27,9 +27,38 @@ function utils.resetAnimation(ref)
     resetAnimation(ref)
 end
 
-function utils.bakeActor(ref)
+function utils.bakeActor(ref, isLayer)
     if not ref or not ref.sceneNode then return nil end
 
+    local objId = (ref.object.id or "unknown"):gsub("%x%x%x%x%x%x%x%x$", "")
+
+    -- Pick the right bake mode based on whether this is a layer export or a
+    -- regular actor export (targeted Shift+C or active-cells bulk export).
+    local bakeMode
+    if isLayer then
+        bakeMode = config and config.actorLayerBakeMode or "deform"
+    else
+        bakeMode = config and config.actorBakeMode or "standard"
+    end
+
+    -- Standard mode: preserve the full scene node hierarchy (skeleton,
+    -- skinned meshes, skin instances), so the export stays properly
+    -- skinned/riggable. Flattening (as the deform path below does) would
+    -- orphan the skin's bone references: the trishape clones keep
+    -- bind-pose vertices plus a skinInstance pointing at bones that are
+    -- not part of the exported tree, which no importer can reconstruct.
+    -- Cloning the whole subtree remaps skin references onto the cloned
+    -- bones, keeping the file self-contained.
+    if bakeMode == "standard" then
+        local root = ref.sceneNode:clone()
+        root.name = objId
+        utils.clean(root)
+        root:update()
+        return root
+    end
+
+    -- Deform mode: flatten to static shapes with the current pose baked
+    -- into the vertex data.
     local invTransform = ref.sceneNode.worldTransform:invert()
     local root = niNode.new()
 
@@ -46,12 +75,11 @@ function utils.bakeActor(ref)
         end
     end
 
-    local objId = (ref.object.id or "unknown"):gsub("%x%x%x%x%x%x%x%x$", "")
     root.name = objId
     root:copyTransforms(ref.sceneNode)
     utils.clean(root)
     root:update()
-    
+
     return root
 end
 
