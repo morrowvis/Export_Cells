@@ -87,7 +87,9 @@ function mcm.registerModConfig()
 
     group:createDropdown({
         label = "Actor",
-        description = "Select the actor export mode for Shift+C: Target exports the targeted NPC/creature; Active Cells exports unique actors from currently active cells.",
+        description = "Select the actor export mode for Shift+C:\n\z
+            Target exports the targeted NPC/creature;\n\z
+            Active Cells exports unique actors from currently active cells.",
         options = actorExportModeOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorExportMode", table = config })
     })
@@ -177,7 +179,8 @@ function mcm.registerModConfig()
 
     group:createYesNoButton({
         label = "Selective Child Nodes Only",
-        description = "JSON exports only exports selective child nodes (Lights, Particles) rather than the whole hierarchy.",
+        description = "JSON exports only exports selective child nodes (Lights, Particles)\n\z
+            rather than the whole hierarchy.",
         variable = mwse.mcm.createTableVariable({ id = "jsonSelectiveChildNodesOnly", table = config })
     })
 
@@ -190,13 +193,15 @@ function mcm.registerModConfig()
     local group = exportPage:createCategory("NIFs")
 
     local nifNameOptions = {
-        { label = "Object ID", value = "id" },
+        { label = "ID", value = "id" },
         { label = "Mesh Path", value = "mesh" },
     }
 
     group:createDropdown({
         label = "Node Name Strategy",
-        description = "Choose whether exported NIF node names use the object ID or mesh path. Mesh path is recommended. Light top-level nodes still use object ID.",
+        description = "Choose whether exported NIF node names use the object ID or mesh path.\n\z
+            Mesh path is recommended.\n\z
+            Light top-level nodes still use object ID.",
         options = nifNameOptions,
         variable = mwse.mcm.createTableVariable({ id = "nifNodeNameStrategy", table = config })
     })
@@ -210,13 +215,15 @@ function mcm.registerModConfig()
     local group = exportPage:createCategory("Actors")
 
     local actorFilenameOptions = {
-        { label = "Object ID", value = "id" },
-        { label = "Object Name", value = "name" },
+        { label = "ID", value = "id" },
+        { label = "Name", value = "name" },
+        { label = "Mesh", value = "mesh" },
     }
 
     group:createDropdown({
         label = "Actor Filename",
-        description = "Choose whether exported NIF files use the object ID or name. Object IDs are for uniqueness, whereas names are for readability.",
+        description = "Choose whether exported NIF files use the object ID, name, or the mesh file's base name.\n\z
+            NPCs fall back to their id.",
         options = actorFilenameOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorFilename", table = config })
     })
@@ -228,14 +235,18 @@ function mcm.registerModConfig()
 
     group:createDropdown({
         label = "Actor Bake Mode",
-        description = "Bake mode for regular actor exports (Shift+C targeted export and Active Cells bulk export). Standard preserves the full skeleton and skinning data so the file stays riggable. Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data.",
+        description = "Bake mode for regular actor exports (Shift+C targeted export and Active Cells bulk export).\n\z
+            Standard preserves the full skeleton and skinning data so the file stays riggable.\n\z
+            Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data.",
         options = actorBakeModeOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorBakeMode", table = config })
     })
 
     group:createDropdown({
         label = "Actor Layer Bake Mode",
-        description = "Bake mode for actor exports in Layer mode (NIF exports). Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data. Standard preserves the full skeleton and skinning data so the file stays riggable.",
+        description = "Bake mode for actor exports in Layer mode (NIF exports).\n\z
+            Skin Deform flattens meshes to posed static shapes with the current pose baked into vertex data.\n\z
+            Standard preserves the full skeleton and skinning data so the file stays riggable.",
         options = actorBakeModeOptions,
         variable = mwse.mcm.createTableVariable({ id = "actorLayerBakeMode", table = config })
     })

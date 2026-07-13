@@ -7,6 +7,28 @@ function actors.setConfig(cfg)
     config = cfg
 end
 
+local function getActorExportName(ref)
+    local rawName
+    if config and config.actorFilename == "id" then
+        rawName = ref.baseObject.id
+    elseif config and config.actorFilename == "mesh" then
+        if ref.object.objectType == tes3.objectType.npc then
+            rawName = ref.baseObject.id
+        else
+            local meshPath = ref.object.mesh
+            if meshPath and meshPath ~= "" then
+                local clean = meshPath:gsub("\\", "/"):lower()
+                clean = clean:gsub("%.[nN][iI][fF]$", "")
+                rawName = clean:match("[^/]+$") or clean
+            end
+            rawName = rawName or ref.baseObject.id
+        end
+    else
+        rawName = ref.baseObject.name or ref.baseObject.id
+    end
+    return rawName:gsub('[^%w %._-]', '_')
+end
+
 function actors.export(ref)
     if not ref or not (ref.object.objectType == tes3.objectType.npc or ref.object.objectType == tes3.objectType.creature) then
         tes3.messageBox("No NPC or creature targeted.")
@@ -24,13 +46,7 @@ function actors.export(ref)
     end
 
     local exportDir = config and config.exportFolder or "Data Files/Export Cells/"
-    local rawName
-    if config and config.actorFilename == "id" then
-        rawName = ref.baseObject.id
-    else
-        rawName = ref.baseObject.name or ref.baseObject.id
-    end
-    local safeName = rawName:gsub('[^%w %._-]', '_')
+    local safeName = getActorExportName(ref)
     local fileName = ("%s.nif"):format(safeName)
     local fullPath = exportDir .. "\\" .. fileName
 
@@ -72,13 +88,7 @@ function actors.exportActiveCells()
                 bakedNode.translation = tes3vector3.new(0, 0, 0)
                 bakedNode.rotation = tes3matrix33.new(1, 0, 0, 0, 1, 0, 0, 0, 1)
 
-                local rawName
-                if config and config.actorFilename == "id" then
-                    rawName = ref.baseObject.id
-                else
-                    rawName = ref.baseObject.name or ref.baseObject.id
-                end
-                local safeName = rawName:gsub('[^%w %._-]', '_')
+                local safeName = getActorExportName(ref)
                 local fileName = ("%s.nif"):format(safeName)
                 local fullPath = exportDir .. "\\" .. fileName
                 fullPath = fullPath:gsub("[/\\]+", "\\")
