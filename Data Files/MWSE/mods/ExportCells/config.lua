@@ -57,6 +57,8 @@ local config = {
 
     cleanExports = false,
     exportHidden = false,
+
+    filterBestLOD = false, -- keeps the first child, which isn't always the nearest level
     exportReports = true,
     exportEmptyLandmassCells = true,
     interiorGarbageCollection = true,

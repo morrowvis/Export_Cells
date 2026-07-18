@@ -332,6 +332,11 @@ end
 
 function utils.filterBestLOD(node)
     if not node then return end
+    -- Disabled by default (config.filterBestLOD). Positional selection keeps the
+    -- first child, which is the *distant* level on far-first meshes; MWSE gives
+    -- us no access to the LOD extents to do better. Leave the NiLODNode intact
+    -- and let the Blender importer resolve it from the file's near/far extents.
+    if not (config and config.filterBestLOD) then return end
     if node:isInstanceOfType(tes3.niType.NiLODNode) then
         if node.children then
             local niNodeCount = 0
