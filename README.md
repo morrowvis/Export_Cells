@@ -2,9 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/ms-arch-mvp/Export_Cells/releases">Download</a> ·
-  <a href="https://ms-arch.gitbook.io/morrowvis/export-cells/functions">Documentation</a> ·
-  <a href="https://github.com/ms-arch-mvp/io_scene_mw_mvp">io_scene_mw_mvp</a> ·
-  <a href="https://youtu.be/KWqIz32oWKQ">Video</a>
+  <a href="https://ms-arch.gitbook.io/morrowvis/export-cells/functions">Documentation</a>
 </p>
 
 Export Cells is an MWSE mod that exports cells for visualisation, editing and testing. It is the foundation of the [Morrowind Visualisation Project](https://ms-arch.gitbook.io/morrowvis/) and includes a suite of functions to enable versatile exports.
