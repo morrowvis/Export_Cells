@@ -9,9 +9,7 @@ local interiorsModule = require("ExportCells.modules.interiors")
 local jsonModule = require("ExportCells.modules.jsons")
 local nifsModule = require("ExportCells.modules.nifs")
 local meshesModule = require("ExportCells.modules.meshes")
-local recordsModule = require("ExportCells.modules.records")
 local reportsModule = require("ExportCells.modules.reports")
-local scriptsModule = require("ExportCells.modules.scripts")
 
 local ui = require("ExportCells.ui")
 local utils = require("ExportCells.utils")
@@ -33,9 +31,7 @@ function export.setConfig(cfg)
     jsonModule.setConfig(cfg)
     nifsModule.setConfig(cfg)
     meshesModule.setConfig(cfg)
-    recordsModule.setConfig(cfg)
     reportsModule.setConfig(cfg)
-    scriptsModule.setConfig(cfg)
 
     utils.setConfig(cfg)
 end
@@ -45,8 +41,6 @@ function export.setCancelRef(ref)
     
     interiorsModule.setCancelRef(exportCancelRequestedRef)
     meshesModule.setCancelRef(exportCancelRequestedRef)
-    recordsModule.setCancelRef(exportCancelRequestedRef)
-    scriptsModule.setCancelRef(exportCancelRequestedRef)
     teleport.setCancelRef(exportCancelRequestedRef)
 end
 
@@ -307,7 +301,7 @@ end
 
 -- Misc
 function export.isInProgress() 
-    return exportInProgress or meshesModule.isInProgress() or recordsModule.isInProgress() or scriptsModule.isInProgress()
+    return exportInProgress or meshesModule.isInProgress()
 end
 function export.exportObjectsByMeshFolder(folder)
     if folder then
@@ -375,44 +369,6 @@ function export.exportObjectsByMeshFolder(folder)
             end
         })
     end
-end
-
-function export.promptExportRecords()
-    if export.isInProgress() then
-        tes3.messageBox("An export is already in progress.")
-        return
-    end
-    ui.createRecordsInputDialog({
-        onConfirm = function(inputString)
-            recordsModule.exportModRecords(inputString)
-        end,
-        onAllRecords = function(resumePart)
-            recordsModule.exportAllRecords(resumePart)
-        end,
-        onCancel = function()
-        end
-    })
-end
-
-function export.promptExportScripts()
-    if export.isInProgress() then
-        tes3.messageBox("An export is already in progress.")
-        return
-    end
-    ui.createScriptsInputDialog({
-        onConfirm = function(inputString)
-            scriptsModule.exportModScripts(inputString)
-        end,
-        onAllScripts = function()
-            scriptsModule.exportAllScripts()
-        end,
-        onCancel = function()
-        end
-    })
-end
-
-function export.exportMasterRecordList(resumePart)
-    recordsModule.exportMasterRecordList(resumePart)
 end
 
 export.exportCells = exportCells

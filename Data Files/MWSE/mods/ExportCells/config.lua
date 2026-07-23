@@ -69,11 +69,6 @@ local config = {
     flaggedMeshesFile = "flagged_meshes.txt",
     exportMeshesWithJson = false,
     exportMeshesSpacedOut = true,
-    recordsRequireMesh = false,
-    recordsExcludeTypes = {
-        tes3.objectType.creature,
-        tes3.objectType.bodyPart,
-    },
 
     -- =============================================================================
     -- JSONS

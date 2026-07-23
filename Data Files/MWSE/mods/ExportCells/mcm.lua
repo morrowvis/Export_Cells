@@ -271,14 +271,6 @@ function mcm.registerModConfig()
         variable = mwse.mcm.createTableVariable({ id = "exportMeshesSpacedOut", table = config })
     })
 
-    local group = exportPage:createCategory("Records")
-
-    group:createYesNoButton({
-        label = "Require Mesh",
-        description = "Only export records that have a mesh path.",
-        variable = mwse.mcm.createTableVariable({ id = "recordsRequireMesh", table = config })
-    })
-
     -- =============================================================================
     -- CONSOLE COMMANDS PAGE
     -- =============================================================================
