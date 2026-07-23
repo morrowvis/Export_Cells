@@ -1,7 +1,7 @@
 <h1 align="center">Export Cells</h1>
 
 <p align="center">
-  <a href="https://github.com/ms-arch-mvp/Export_Cells/releases">Download</a> ·
+  <a href="https://github.com/morrowivs/Export_Cells/releases">Download</a> ·
   <a href="https://ms-arch.gitbook.io/morrowvis/export-cells/functions">Documentation</a>
 </p>
 
