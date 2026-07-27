@@ -1,7 +1,7 @@
 <h1 align="center">Export Cells</h1>
 
 <p align="center">
-  <a href="https://github.com/morrowivs/Export_Cells/releases">Download</a> ·
+  <a href="https://github.com/morrowvis/Export_Cells/releases">Download</a> ·
   <a href="https://ms-arch.gitbook.io/morrowvis/export-cells/functions">Documentation</a>
 </p>
 
@@ -9,7 +9,9 @@ Export Cells is an MWSE mod that exports cells for visualisation, editing and te
 
 Export Cells is based on [Export Sphere](https://morrowind-modding.github.io/modding-tools/3d-modeling-tools/export-sphere) and works in conjunction.
 
-<img width="3836" height="2159" alt="Screenshot" src="https://github.com/user-attachments/assets/1d34f998-8ab7-4ccd-96a7-8e93661f97dc" />
+<a href="https://github.com/morrowvis/Export_Cells/releases">
+  <img src="https://github.com/user-attachments/assets/1d34f998-8ab7-4ccd-96a7-8e93661f97dc" alt="Alt Text">
+</a>
 
 ### Prerequisites
 * [MGE XE UF](https://www.nexusmods.com/morrowind/mods/57200) with use shared memory enabled
