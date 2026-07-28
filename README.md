@@ -21,4 +21,4 @@ Export Cells is based on [Export Sphere](https://morrowind-modding.github.io/mod
 ### Installation
 * Download from releases and install as a mod.
 * Overwrite MWSE.dll in the game directory to use deform actor export functions. MWSE.dll has been provided by [Greatness7](https://github.com/Greatness7) and adds the method shape:applySkinDeform()
-* Install [io_scene_mw_mvp](https://github.com/ms-arch-mvp/io_scene_mw_mvp) for better imports.
+* Install [io_scene_mw_mvp](https://github.com/ms-arch-mvp/io_scene_mw_mvp) for better supported imports.
