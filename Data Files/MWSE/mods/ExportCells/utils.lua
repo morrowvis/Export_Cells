@@ -5,8 +5,7 @@ local utils = {}
 local config = nil
 local constants = require("ExportCells.constants")
 
--- Shown once per session if deform baking is requested on an MWSE build that
--- lacks niTriShape:applySkinDeform(), so the message does not spam per-actor.
+-- One-shot guard so the unsupported-deform message doesn't spam per-actor.
 local warnedNoSkinDeform = false
 
 local function resetAnimation(ref)
@@ -36,8 +35,7 @@ function utils.bakeActor(ref, isLayer)
 
     local objId = (ref.object.id or "unknown"):gsub("%x%x%x%x%x%x%x%x$", "")
 
-    -- Pick the right bake mode based on whether this is a layer export or a
-    -- regular actor export (targeted Shift+C or active-cells bulk export).
+    -- Layer exports use the layer bake mode; everything else the standard one.
     local bakeMode
     if isLayer then
         bakeMode = config and config.actorLayerBakeMode or "deform"
@@ -45,14 +43,7 @@ function utils.bakeActor(ref, isLayer)
         bakeMode = config and config.actorBakeMode or "standard"
     end
 
-    -- Standard mode: preserve the full scene node hierarchy (skeleton,
-    -- skinned meshes, skin instances), so the export stays properly
-    -- skinned/riggable. Flattening (as the deform path below does) would
-    -- orphan the skin's bone references: the trishape clones keep
-    -- bind-pose vertices plus a skinInstance pointing at bones that are
-    -- not part of the exported tree, which no importer can reconstruct.
-    -- Cloning the whole subtree remaps skin references onto the cloned
-    -- bones, keeping the file self-contained.
+    -- Standard: clone the whole subtree so skin/skeleton stays riggable.
     if bakeMode == "standard" then
         local root = ref.sceneNode:clone()
         root.name = objId
@@ -61,8 +52,7 @@ function utils.bakeActor(ref, isLayer)
         return root
     end
 
-    -- Deform mode: flatten to static shapes with the current pose baked
-    -- into the vertex data.
+    -- Deform: flatten to static shapes with the current pose baked in.
     local invTransform = ref.sceneNode.worldTransform:invert()
     local root = niNode.new()
 
@@ -71,9 +61,7 @@ function utils.bakeActor(ref, isLayer)
             local t = invTransform * shape.worldTransform
             local clone = shape:clone()
             if clone.skinInstance then
-                -- Deform baking needs niTriShape:applySkinDeform(), which is
-                -- absent from some MWSE builds. Report it once and abort the
-                -- bake rather than silently substituting a different result.
+                -- applySkinDeform() is missing on some MWSE builds; warn and abort.
                 if type(clone.applySkinDeform) ~= "function" then
                     if not warnedNoSkinDeform then
                         warnedNoSkinDeform = true
@@ -101,27 +89,14 @@ function utils.setConfig(cfg)
     config = cfg
 end
 
--- Strips any leading "data files" segment (any case, either slash style) from a
--- folder value, so resolveExportFolder can re-add it exactly once.
+-- Strips a leading "data files" segment so resolveExportFolder re-adds it once.
 local function stripDataFilesPrefix(folder)
     folder = (folder or ""):gsub("[\\/]+$", "")
     folder = folder:gsub("^[Dd][Aa][Tt][Aa]%s+[Ff][Ii][Ll][Ee][Ss][\\/]+", "")
     return folder
 end
 
--- Computes cfg.exportFolder (the fully resolved "data files\<name>" path every
--- export module reads directly) from cfg.exportFolderName (the bare folder
--- name edited via MCM). Call once on the resolved config table (see
--- main.lua/mcm.lua) -- every other module reads config.exportFolder directly
--- and expects it to already be fully resolved, so this must run before any of
--- them do. Deliberately does NOT write back into cfg.exportFolderName -- that
--- field is what the MCM text field is bound to, and must stay a bare name, not
--- get overwritten with the resolved "data files\..." value (that was the bug:
--- an earlier version of this function normalized cfg.exportFolder in place,
--- which is the same field MCM edits, so the field displayed the resolved path
--- instead of a bare name). Falls back to deriving a name from a pre-this-fix
--- saved `exportFolder` value if `exportFolderName` is missing (an older saved
--- config that predates this split).
+-- Resolves cfg.exportFolder from cfg.exportFolderName; run once before modules read it.
 function utils.resolveExportFolder(cfg)
     local name = cfg.exportFolderName or stripDataFilesPrefix(cfg.exportFolder or "Export Cells")
     cfg.exportFolder = "data files\\" .. stripDataFilesPrefix(name)
@@ -346,10 +321,7 @@ end
 
 function utils.filterBestLOD(node)
     if not node then return end
-    -- Disabled by default (config.filterBestLOD). Positional selection keeps the
-    -- first child, which is the *distant* level on far-first meshes; MWSE gives
-    -- us no access to the LOD extents to do better. Leave the NiLODNode intact
-    -- and let the Blender importer resolve it from the file's near/far extents.
+    -- Off by default; MWSE exposes no LOD extents, so let the importer resolve it.
     if not (config and config.filterBestLOD) then return end
     if node:isInstanceOfType(tes3.niType.NiLODNode) then
         if node.children then
@@ -381,9 +353,7 @@ function utils.traversalOrExportMsg(exportMode, exportMsg, traversalMsg)
     end
 end
 
--- Console toggle helpers: fire-and-forget.
--- consoleToggles are applied once at export start and left on for the session.
--- restoreConsoleToggles are re-disabled when export finishes.
+-- Console toggle helpers: applied once at export start, restored when it ends.
 local togglesSetup = false
 
 function utils.setupConsoleToggles()
@@ -406,8 +376,7 @@ function utils.restoreConsoleToggles()
             tes3.runLegacyScript{ command = toggle }
         end
     end
-    -- Do NOT reset togglesSetup — persistent toggles (e.g. TCL) must not
-    -- re-fire on the next export. They were intentionally left on for the session.
+    -- Do NOT reset togglesSetup — persistent toggles (e.g. TCL) stay on all session.
 end
 
 function utils.executeConsoleFile()
