@@ -5,6 +5,10 @@ local utils = {}
 local config = nil
 local constants = require("ExportCells.constants")
 
+-- Shown once per session if deform baking is requested on an MWSE build that
+-- lacks niTriShape:applySkinDeform(), so the message does not spam per-actor.
+local warnedNoSkinDeform = false
+
 local function resetAnimation(ref)
     if not ref.animationData then
         return
@@ -67,6 +71,16 @@ function utils.bakeActor(ref, isLayer)
             local t = invTransform * shape.worldTransform
             local clone = shape:clone()
             if clone.skinInstance then
+                -- Deform baking needs niTriShape:applySkinDeform(), which is
+                -- absent from some MWSE builds. Report it once and abort the
+                -- bake rather than silently substituting a different result.
+                if type(clone.applySkinDeform) ~= "function" then
+                    if not warnedNoSkinDeform then
+                        warnedNoSkinDeform = true
+                        tes3.messageBox("Deform bake mode is not supported by this MWSE build (missing applySkinDeform). Set the actor bake mode to \"standard\" to export actors.")
+                    end
+                    return nil
+                end
                 clone:applySkinDeform()
             end
             clone.name = ""

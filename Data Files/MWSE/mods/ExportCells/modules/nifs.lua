@@ -55,42 +55,46 @@ function nifs.export(regionCells, exportMode, currentIndex, totalCount)
                             utils.resetAnimation(ref)
                         end
                         if isActor then
-                            local bakedNode = utils.bakeActor(ref, true)
-                            if bakedNode then
-                                node = bakedNode
+                            -- Actors must be baked; if the bake is refused
+                            -- (e.g. unsupported deform mode reported to the
+                            -- user), skip the actor rather than exporting the
+                            -- raw un-baked clone.
+                            node = utils.bakeActor(ref, exportMode == constants.EXPORT_MODE.LAYER)
+                        end
+
+                        if node then
+                            utils.filterBestLOD(node)
+                            local nodeName, baseNameForRenaming
+                            local relativePath = (obj.mesh and obj.mesh ~= "") and utils.getRelativeMeshPath(obj.mesh) or nil
+
+                            if isActor then
+                                nodeName = objId
+                                baseNameForRenaming = objId
+                            elseif isLight then
+                                idCounters[objId] = (idCounters[objId] or 0) + 1
+                                local count = idCounters[objId]
+                                nodeName = (count == 1) and objId or string.format("%s.%03d", objId, count - 1)
+                                baseNameForRenaming = relativePath or objId
+                            elseif config.nifNodeNameStrategy == "id" then
+                                nodeName = objId
+                                baseNameForRenaming = objId
+                            elseif relativePath then
+                                nodeName = relativePath
+                                baseNameForRenaming = relativePath
+                            else
+                                nodeName = objId
+                                baseNameForRenaming = objId
                             end
-                        end
-                        utils.filterBestLOD(node)
-                        local nodeName, baseNameForRenaming
-                        local relativePath = (obj.mesh and obj.mesh ~= "") and utils.getRelativeMeshPath(obj.mesh) or nil
 
-                        if isActor then
-                            nodeName = objId
-                            baseNameForRenaming = objId
-                        elseif isLight then
-                            idCounters[objId] = (idCounters[objId] or 0) + 1
-                            local count = idCounters[objId]
-                            nodeName = (count == 1) and objId or string.format("%s.%03d", objId, count - 1)
-                            baseNameForRenaming = relativePath or objId
-                        elseif config.nifNodeNameStrategy == "id" then
-                            nodeName = objId
-                            baseNameForRenaming = objId
-                        elseif relativePath then
-                            nodeName = relativePath
-                            baseNameForRenaming = relativePath
-                        else
-                            nodeName = objId
-                            baseNameForRenaming = objId
-                        end
+                            if config.nifRenameMeshChildNodes then
+                                utils.renameNodes(node, baseNameForRenaming)
+                            end
+                            node.name = nodeName
 
-                        if config.nifRenameMeshChildNodes then
-                            utils.renameNodes(node, baseNameForRenaming)
+                            utils.stripHiddenNodes(node)
+                            node:removeAllControllers()
+                            root:attachChild(node)
                         end
-                        node.name = nodeName
-
-                        utils.stripHiddenNodes(node)
-                        node:removeAllControllers()
-                        root:attachChild(node)
                     end
                 end
             end
