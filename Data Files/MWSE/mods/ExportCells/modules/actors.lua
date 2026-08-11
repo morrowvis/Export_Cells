@@ -1,6 +1,7 @@
 local actors = {}
 
 local utils = require("ExportCells.utils")
+local actors_metadata = require("ExportCells.modules.actors_metadata")
 local config = nil
 
 function actors.setConfig(cfg)
@@ -52,6 +53,8 @@ function actors.export(ref)
 
     fullPath = fullPath:gsub("[/\\]+", "\\")
 
+    actors_metadata.attach(ref.baseObject or ref.object, bakedNode)
+
     bakedNode:saveBinary(fullPath)
     tes3.messageBox("Actor exported to %s", fileName)
 end
@@ -92,6 +95,8 @@ function actors.exportActiveCells()
                 local fileName = ("%s.nif"):format(safeName)
                 local fullPath = exportDir .. "\\" .. fileName
                 fullPath = fullPath:gsub("[/\\]+", "\\")
+
+                actors_metadata.attach(ref.baseObject or ref.object, bakedNode)
 
                 bakedNode:saveBinary(fullPath)
                 exportCount = exportCount + 1
