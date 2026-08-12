@@ -470,7 +470,7 @@ function jsons.export(regionCells, currentIndex, totalCount)
     local entries = {}
 
     local cell        = tes3.player.cell
-    local cellName    = (cell.id):gsub(":", "-")
+    local cellName    = (cell.id):gsub(":", "-"):gsub('"', "'")
     local coords      = ""
     if not cell.isInterior then
         coords = string.format("%d,%d ", cell.gridX, cell.gridY)
