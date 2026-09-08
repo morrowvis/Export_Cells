@@ -14,6 +14,7 @@ Export Cells is based on [Export Sphere](https://morrowind-modding.github.io/mod
 </a>
 
 ### Prerequisites
+* [MGE XE G7 Fork](https://www.nexusmods.com/morrowind/mods/59957) or 
 * [MGE XE UF](https://www.nexusmods.com/morrowind/mods/57200) with use shared memory enabled
 * [Morrowind Script Extender (MWSE)](https://www.nexusmods.com/morrowind/mods/45468)
 * [Morrowind Code Patch](https://www.nexusmods.com/morrowind/mods/19510)
