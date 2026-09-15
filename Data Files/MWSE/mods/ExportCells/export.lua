@@ -265,7 +265,8 @@ function export.exportLandmassGrid(gridType)
                 local regionCells = {}
                 local step = (gridType == "2x2") and 1 or 1 -- anchors are already grid-aware
                 if gridType == "2x2" then
-                    for dx = 0, 1 do for dy = 0, 1 do
+                    -- same shape as export2x2: +1X, -1Y from the top-left anchor
+                    for dx = 0, 1 do for dy = 0, -1, -1 do
                         local c = tes3.getCell({x = anchor.x + dx, y = anchor.y + dy})
                         if c then table.insert(regionCells, c) end
                     end end

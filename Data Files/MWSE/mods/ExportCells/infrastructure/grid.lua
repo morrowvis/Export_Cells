@@ -53,27 +53,35 @@ function grid.getGridAnchors(gridType, minX, maxX, minY, maxY, visited)
     -- where the player is standing, so a landmass always partitions into the same
     -- blocks no matter where the export is started from.
     --
-    -- Each function must return the anchor of the block that CONTAINS n:
-    --   2x2 blocks expand dx,dy = 0..1  -> {a, a+1},     so floor n to even.
-    --   3x3 blocks expand dx,dy = -1..1 -> {a-1, a, a+1}, so snap n to a multiple of 3.
-    -- Rounding n UP instead drops cells: a 2x2 anchor of n+1 gives {n+1, n+2}, which
-    -- does not contain n at all, and whole columns and rows fall outside every block.
-    local function anchor2(n) return n - (n % 2) end
+    -- The block shape must match export2x2 / export3x3 exactly, because the engine
+    -- builds a cell's edge decals only on its BOTTOM and RIGHT borders. A 2x2 block
+    -- is therefore anchored at its TOP-LEFT cell and expands +1X / -1Y:
+    --   block(ax, ay) = {ax, ax+1} x {ay-1, ay}
+    -- Expanding +Y instead leaves the strip that stitches the block's bottom and
+    -- right edge outside the block, and the seam shows as a line every 2 cells.
+    --
+    -- So each function returns the anchor of the block CONTAINING n:
+    --   2x2 X -> floor to even          ({ax, ax+1} contains n)
+    --   2x2 Y -> the ODD member of the pair ({ay-1, ay} contains n)
+    --   3x3   -> nearest multiple of 3  ({a-1, a, a+1} contains n)
+    local function anchor2x(n) return n - (n % 2) end
+    local function anchor2y(n) return n - (n % 2) + 1 end
     local function anchor3(n)
         if n % 3 == 0 then return n end
         if n % 3 == 1 then return n - 1 end
         return n + 1
     end
 
-    local toAnchor = (gridType == "2x2") and anchor2 or anchor3
+    local toAnchorX = (gridType == "2x2") and anchor2x or anchor3
+    local toAnchorY = (gridType == "2x2") and anchor2y or anchor3
     local step = (gridType == "2x2") and 2 or 3
 
     if cfg.exportEmptyLandmassCells then
         -- Walk the bounding box along the lattice. Both ends are snapped, so the
         -- outermost column and row sit inside a block instead of just past the last
         -- anchor.
-        for x = toAnchor(minX), toAnchor(maxX), step do
-            for y = toAnchor(minY), toAnchor(maxY), step do
+        for x = toAnchorX(minX), toAnchorX(maxX), step do
+            for y = toAnchorY(minY), toAnchorY(maxY), step do
                 table.insert(anchors, { x = x, y = y })
             end
         end
@@ -82,7 +90,7 @@ function grid.getGridAnchors(gridType, minX, maxX, minY, maxY, visited)
         for key, _ in pairs(visited) do
             local x, y = key:match("(-?%d+),(-?%d+)")
             x, y = tonumber(x), tonumber(y)
-            local ax, ay = toAnchor(x), toAnchor(y)
+            local ax, ay = toAnchorX(x), toAnchorY(y)
             local akey = ax .. "," .. ay
             if not anchorSet[akey] then
                 anchorSet[akey] = { x = ax, y = ay }
