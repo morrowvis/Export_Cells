@@ -174,6 +174,16 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
         source_form_id = function() return ref and jsonNumber(ref.sourceFormId or 0) end,
         source_mod_id  = function() return ref and jsonNumber(ref.sourceModId or 0) end,
         source_mod     = function() return jsonString((ref and ref.sourceMod) or obj.sourceMod or "") end,
+        -- The cell this reference sits in, as one key to group and filter by. The
+        -- root "cells" manifest holds the name/region for each; join on "x,y". Kept
+        -- flat rather than the manifest's own shape because a dict cannot be a dict
+        -- key or a set member, which is what this field is for.
+        cell           = function()
+            local c = ref and ref.cell
+            if not c then return nil end
+            if c.isInterior then return jsonString(c.id or "") end
+            return jsonString(string.format("%d,%d", c.gridX, c.gridY))
+        end,
         can_carry      = function() return canCarry and "true" or nil end,
         mesh           = function() return relMesh and jsonString(relMesh) end,
         script         = function() return obj.script and jsonString(obj.script.id or "") end,
