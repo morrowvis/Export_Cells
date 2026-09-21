@@ -192,6 +192,26 @@ function jsons.processInstance(context, obj, sceneNode, instName, parentName, tr
             local cellId = ref.destination.cell and ref.destination.cell.id or ""
             return jsonString(cellId)
         end,
+        -- Lock lives on the reference, not the object: two identical doors can differ.
+        locked         = function()
+            local ln = ref and safeRead(ref, "lockNode")
+            return (ln and ln.locked) and "true" or nil
+        end,
+        lock_level     = function()
+            local ln = ref and safeRead(ref, "lockNode")
+            return (ln and ln.locked) and jsonNumber(ln.level or 0)
+        end,
+        lock_key       = function()
+            local ln = ref and safeRead(ref, "lockNode")
+            local k = ln and ln.key
+            return k and jsonString(k.id or "")
+        end,
+        -- Independent of locked: a container can be trapped and unlocked.
+        trap           = function()
+            local ln = ref and safeRead(ref, "lockNode")
+            local t = ln and ln.trap
+            return t and jsonString(t.id or "")
+        end,
     }
     
     local fieldLines = {}

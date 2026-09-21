@@ -92,6 +92,10 @@ local config = {
         "mesh",
         "script",
         "destination",
+        "locked",
+        "lock_level",
+        "lock_key",
+        "trap",
     },
 
     jsonSelectiveChildNodesOnly = true,
